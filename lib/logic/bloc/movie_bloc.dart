@@ -15,20 +15,4 @@ class MovieBloc extends Bloc<MovieEvent, MovieState> {
     on<FetchMovies>((event, emit) async =>
         emit(MovieLoaded(await repository.fetchMovies())));
   }
-
-  Stream<MovieState> mapEventToState(MovieEvent event) async* {
-    if (event is FetchMovies) {
-      yield* _mapMoviesToState();
-    }
-  }
-
-  Stream<MovieState> _mapMoviesToState() async* {
-    yield MovieLoading();
-    var movies = await repository.fetchMovies();
-    if (movies.isEmpty) {
-      yield MovieNotLoaded();
-    } else {
-      yield MovieLoaded(movies);
-    }
-  }
 }
