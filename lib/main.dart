@@ -1,52 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'logic/bloc/movie_bloc.dart';
+import 'repository/movie_repository.dart';
+
+import 'presentation/screens/movies_list_screen.dart';
+import 'presentation/screens/movie_detail_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  // final MovieBloc _movieBloc = MovieBloc();
+  final MovieRepository _movieRepository = MovieRepository();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Bloc',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity),
+      home: MyHomePage(title: 'MyHomePage'),
+      routes: {
+        MoviesListScreen.routeName: (_) => BlocProvider(
+              create: (context) =>
+                  MovieBloc(repository: _movieRepository)..add(FetchMovies()),
+              child: MoviesListScreen(),
+            ),
+        MovieDetailScreen.routeName: (ctx) => const MovieDetailScreen()
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  String title;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  MyHomePage({required this.title});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center());
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(MoviesListScreen.routeName);
+              },
+              child: const Text('Bloc'),
+              heroTag: 'blocbtn',
+            ),
+            FloatingActionButton(
+              onPressed: () {},
+              child: const Text('MVVM'),
+              heroTag: 'mvvmbtn',
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
