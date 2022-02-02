@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gl_test/presentation/screens/movie_detail_screen.dart';
 
 import '../../logic/bloc/movie_bloc.dart';
 
@@ -15,7 +16,6 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
 
   @override
   initState() {
-    print("initsate");
     super.initState();
     movieBloc = BlocProvider.of<MovieBloc>(context);
   }
@@ -32,14 +32,19 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is MovieNotLoaded) {
-            return const Center(child: const Text("Movies not loaded"));
+            return const Center(child: Text("Movies not loaded"));
           }
           if (state is MovieLoaded) {
-            print("state is MovieLoaded");
             return ListView.builder(
-              itemBuilder: (context, index) => ListTile(
-                title: Text(state.movies[0].name),
-              ),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(MovieDetailScreen.routeName);
+                  },
+                  title: Text(state.movies[index].name),
+                );
+              },
               itemCount: state.movies.length,
             );
           }

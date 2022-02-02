@@ -11,7 +11,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // final MovieBloc _movieBloc = MovieBloc();
   final MovieRepository _movieRepository = MovieRepository();
 
   @override
@@ -28,7 +27,7 @@ class MyApp extends StatelessWidget {
                   MovieBloc(repository: _movieRepository)..add(FetchMovies()),
               child: MoviesListScreen(),
             ),
-        MovieDetailScreen.routeName: (ctx) => const MovieDetailScreen()
+        MovieDetailScreen.routeName: (ctx) => MovieDetailScreen()
       },
     );
   }

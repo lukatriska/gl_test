@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 class MovieDetailScreen extends StatelessWidget {
 
-  static const routeName = '/movie-detail';
+  // String movieName;
+  // String imageUrl;
+  //
+  // MovieDetailScreen.name(this.movieName, this.imageUrl);
 
-  const MovieDetailScreen({Key? key}) : super(key: key);
+  static const routeName = '/movie-detail';
 
   @override
   Widget build(BuildContext context) {
