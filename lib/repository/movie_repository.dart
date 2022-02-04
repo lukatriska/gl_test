@@ -10,7 +10,7 @@ class MovieRepository {
     final data = jsonDecode(await response);
 
     List<Movie> moviesList = [];
-    data.forEach((k, v) => moviesList.add(Movie(k, v)));
+    data.forEach((k, v) => moviesList.add(Movie(name: k, imageUrl: v)));
 
     return moviesList;
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'logic/bloc/movie_bloc.dart';
+import 'logic/movie_bloc/movie_bloc.dart';
 import 'repository/movie_repository.dart';
 
 import 'presentation/screens/movies_list_screen.dart';

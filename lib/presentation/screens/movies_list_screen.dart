@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gl_test/presentation/screens/movie_detail_screen.dart';
 
-import '../../logic/bloc/movie_bloc.dart';
+import '../../logic/movie_bloc/movie_bloc.dart';
 
 class MoviesListScreen extends StatefulWidget {
   static const routeName = '/movies-list';
