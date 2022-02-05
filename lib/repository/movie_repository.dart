@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import '../models/movie.dart';
@@ -14,4 +15,7 @@ class MovieRepository {
 
     return moviesList;
   }
+
+  Image fetchMovieImage(imageUrl) => Image.network(imageUrl);
+
 }

@@ -72,7 +72,7 @@ packages:
     source: hosted
     version: "2.0.6"
   build_runner:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: build_runner
       url: "https://pub.dartlang.org"
@@ -120,6 +120,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  chopper:
+    dependency: "direct main"
+    description:
+      name: chopper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.5"
+  chopper_generator:
+    dependency: "direct dev"
+    description:
+      name: chopper_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.5"
   cli_util:
     dependency: transitive
     description:
@@ -229,14 +243,14 @@ packages:
     source: sdk
     version: "0.0.0"
   freezed:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: freezed
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
   freezed_annotation:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: freezed_annotation
       url: "https://pub.dartlang.org"
@@ -263,6 +277,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.4"
   http_multi_server:
     dependency: transitive
     description:

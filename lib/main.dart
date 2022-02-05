@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'logic/movie_bloc/movie_bloc.dart';
+import 'logic/movie_detail_bloc/movie_detail_bloc.dart';
 import 'repository/movie_repository.dart';
 
 import 'presentation/screens/movies_list_screen.dart';
@@ -15,20 +16,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Bloc',
-      theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity),
-      home: MyHomePage(title: 'MyHomePage'),
-      routes: {
-        MoviesListScreen.routeName: (_) => BlocProvider(
-              create: (context) =>
-                  MovieBloc(repository: _movieRepository)..add(FetchMovies()),
-              child: MoviesListScreen(),
-            ),
-        MovieDetailScreen.routeName: (ctx) => MovieDetailScreen()
-      },
+    return BlocProvider(
+      create: (context) => MovieDetailBloc(repository: _movieRepository),
+      child: MaterialApp(
+        title: 'Flutter Bloc',
+        theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity),
+        home: MyHomePage(title: 'Bloc / MVVM Movie App'),
+        routes: {
+          MoviesListScreen.routeName: (_) => BlocProvider(
+                create: (context) =>
+                    MovieBloc(repository: _movieRepository)..add(FetchMovies()),
+                child: MoviesListScreen(),
+              ),
+          MovieDetailScreen.routeName: (ctx) => MovieDetailScreen(),
+        },
+      ),
     );
   }
 }
@@ -54,9 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(MoviesListScreen.routeName);
-              },
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(MoviesListScreen.routeName),
               child: const Text('Bloc'),
               heroTag: 'blocbtn',
             ),
