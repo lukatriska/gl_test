@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,7 +11,7 @@ class MovieDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Movie Detail"),
+        title: const Text("Movie Details"),
       ),
       body: BlocBuilder<MovieDetailBloc, MovieDetailState>(
         builder: (context, state) {
@@ -22,10 +23,24 @@ class MovieDetailScreen extends StatelessWidget {
           }
           if (state is MovieImageLoaded) {
             return Center(
-              child: state.img,
+              child: Column(
+                children: [
+                  CachedNetworkImage(imageUrl: state.imageUrl),
+                  Card(
+                    margin: const EdgeInsets.all(19),
+                    elevation: 0,
+                    child: Text(state.movieName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                ],
+              ),
             );
+          } else {
+            return const Center();
           }
-          return const Center();
         },
       ),
     );

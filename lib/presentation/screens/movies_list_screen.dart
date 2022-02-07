@@ -39,10 +39,13 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
             return ListView.builder(
               itemBuilder: (ctx, index) => ListTile(
                 onTap: () {
-                  movieDetailBloc.add(FetchMovieImage(state.movies[index].imageUrl));
+                  movieDetailBloc.add(FetchMovieImage(
+                      state.movies[index].name, state.movies[index].imageUrl));
                   Navigator.of(context).pushNamed(MovieDetailScreen.routeName);
                 },
-                title: Text(state.movies[index].name),
+                title: Text(
+                  state.movies[index].name,
+                ),
               ),
               itemCount: state.movies.length,
             );

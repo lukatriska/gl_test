@@ -12,10 +12,11 @@ class MovieImageNotLoaded extends MovieDetailState {}
 class MovieImageLoading extends MovieDetailState {}
 
 class MovieImageLoaded extends MovieDetailState {
-  final Image img;
+  final String movieName;
+  final String imageUrl;
 
-  MovieImageLoaded(this.img);
+  MovieImageLoaded(this.movieName, this.imageUrl);
 
   @override
-  List<Object> get props => [img];
+  List<Object> get props => [movieName, imageUrl];
 }

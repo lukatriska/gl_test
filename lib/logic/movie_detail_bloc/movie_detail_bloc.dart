@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 import '../../repository/movie_repository.dart';
 
@@ -13,6 +12,6 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
 
   MovieDetailBloc({required this.repository}) : super(MovieImageInitial()) {
     on<FetchMovieImage>((event, emit) =>
-        emit(MovieImageLoaded(repository.fetchMovieImage(event.imageUrl))));
+        emit(MovieImageLoaded(event.movieName, event.imageUrl)));
   }
 }

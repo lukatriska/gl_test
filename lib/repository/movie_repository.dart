@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 
 import '../models/movie.dart';
@@ -16,6 +16,6 @@ class MovieRepository {
     return moviesList;
   }
 
-  Image fetchMovieImage(imageUrl) => Image.network(imageUrl);
-
+  CachedNetworkImage fetchMovieImage(imageUrl) =>
+      CachedNetworkImage(imageUrl: imageUrl);
 }
