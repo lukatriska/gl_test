@@ -20,11 +20,7 @@ class MovieLoaded extends MovieState {
   List<Object> get props => [movies];
 }
 
-// class MovieImageLoaded extends MovieState {
-//   final Image img;
-//
-//   MovieImageLoaded(this.img);
-//
-//   @override
-//   List<Object> get props => [img];
-// }
+class MovieTapped extends MovieState {
+
+}
+
