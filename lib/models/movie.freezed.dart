@@ -18,10 +18,14 @@ final _privateConstructorUsedError = UnsupportedError(
 class _$MovieTearOff {
   const _$MovieTearOff();
 
-  _Movie call({required String name, required String imageUrl}) {
+  _Movie call(
+      {required String name,
+      required String imageUrl,
+      bool wasTapped = false}) {
     return _Movie(
       name: name,
       imageUrl: imageUrl,
+      wasTapped: wasTapped,
     );
   }
 }
@@ -33,6 +37,7 @@ const $Movie = _$MovieTearOff();
 mixin _$Movie {
   String get name => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
+  bool get wasTapped => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MovieCopyWith<Movie> get copyWith => throw _privateConstructorUsedError;
@@ -42,7 +47,7 @@ mixin _$Movie {
 abstract class $MovieCopyWith<$Res> {
   factory $MovieCopyWith(Movie value, $Res Function(Movie) then) =
       _$MovieCopyWithImpl<$Res>;
-  $Res call({String name, String imageUrl});
+  $Res call({String name, String imageUrl, bool wasTapped});
 }
 
 /// @nodoc
@@ -57,6 +62,7 @@ class _$MovieCopyWithImpl<$Res> implements $MovieCopyWith<$Res> {
   $Res call({
     Object? name = freezed,
     Object? imageUrl = freezed,
+    Object? wasTapped = freezed,
   }) {
     return _then(_value.copyWith(
       name: name == freezed
@@ -67,6 +73,10 @@ class _$MovieCopyWithImpl<$Res> implements $MovieCopyWith<$Res> {
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      wasTapped: wasTapped == freezed
+          ? _value.wasTapped
+          : wasTapped // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -76,7 +86,7 @@ abstract class _$MovieCopyWith<$Res> implements $MovieCopyWith<$Res> {
   factory _$MovieCopyWith(_Movie value, $Res Function(_Movie) then) =
       __$MovieCopyWithImpl<$Res>;
   @override
-  $Res call({String name, String imageUrl});
+  $Res call({String name, String imageUrl, bool wasTapped});
 }
 
 /// @nodoc
@@ -92,6 +102,7 @@ class __$MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? imageUrl = freezed,
+    Object? wasTapped = freezed,
   }) {
     return _then(_Movie(
       name: name == freezed
@@ -102,6 +113,10 @@ class __$MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      wasTapped: wasTapped == freezed
+          ? _value.wasTapped
+          : wasTapped // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -109,16 +124,20 @@ class __$MovieCopyWithImpl<$Res> extends _$MovieCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Movie implements _Movie {
-  const _$_Movie({required this.name, required this.imageUrl});
+  const _$_Movie(
+      {required this.name, required this.imageUrl, this.wasTapped = false});
 
   @override
   final String name;
   @override
   final String imageUrl;
+  @JsonKey()
+  @override
+  final bool wasTapped;
 
   @override
   String toString() {
-    return 'Movie(name: $name, imageUrl: $imageUrl)';
+    return 'Movie(name: $name, imageUrl: $imageUrl, wasTapped: $wasTapped)';
   }
 
   @override
@@ -127,14 +146,16 @@ class _$_Movie implements _Movie {
         (other.runtimeType == runtimeType &&
             other is _Movie &&
             const DeepCollectionEquality().equals(other.name, name) &&
-            const DeepCollectionEquality().equals(other.imageUrl, imageUrl));
+            const DeepCollectionEquality().equals(other.imageUrl, imageUrl) &&
+            const DeepCollectionEquality().equals(other.wasTapped, wasTapped));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(name),
-      const DeepCollectionEquality().hash(imageUrl));
+      const DeepCollectionEquality().hash(imageUrl),
+      const DeepCollectionEquality().hash(wasTapped));
 
   @JsonKey(ignore: true)
   @override
@@ -143,13 +164,17 @@ class _$_Movie implements _Movie {
 }
 
 abstract class _Movie implements Movie {
-  const factory _Movie({required String name, required String imageUrl}) =
-      _$_Movie;
+  const factory _Movie(
+      {required String name,
+      required String imageUrl,
+      bool wasTapped}) = _$_Movie;
 
   @override
   String get name;
   @override
   String get imageUrl;
+  @override
+  bool get wasTapped;
   @override
   @JsonKey(ignore: true)
   _$MovieCopyWith<_Movie> get copyWith => throw _privateConstructorUsedError;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gl_test/presentation/movie_detail_widget.dart';
+import 'package:gl_test/presentation/components/movie_detail_widget.dart';
 import 'package:gl_test/presentation/screens/movie_detail_screen.dart';
+import 'package:gl_test/view_models/movies_view_model.dart';
 
 import '../../logic/movie_bloc/movie_bloc.dart';
 import '../../logic/movie_detail_bloc/movie_detail_bloc.dart';
@@ -15,7 +16,6 @@ class MoviesListScreen extends StatefulWidget {
 
 class _MoviesListScreenState extends State<MoviesListScreen> {
   late MovieDetailBloc movieDetailBloc;
-  int tappedTileIndex = -1;
 
   @override
   initState() {
@@ -25,6 +25,8 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MoviesViewModel moviesViewModel = context.watch<MoviesViewModel>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("List of Movies"),
@@ -39,33 +41,59 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
               if (state is MovieNotLoaded) {
                 return const Center(child: Text("Movies not loaded"));
               }
-
               if (state is MovieLoaded) {
+                BlocProvider.of<MovieBloc>(context)
+                    .add(SaveCurrentOrientation(orientation));
+                if (orientation !=
+                    BlocProvider.of<MovieBloc>(context).lastOrientation) {
+                  movieDetailBloc.add(StopMovieDetailLoading());
+                }
+
                 return Row(
                   children: [
                     Flexible(
                       flex: 1,
-                      child: ListView.builder(
-                        itemBuilder: (ctx, index) => ListTile(
-                          selectedTileColor: Colors.grey,
-                          selectedColor: Colors.black,
-                          onTap: () {
-                            movieDetailBloc.add(FetchMovieImage(
-                              state.movies[index].name,
-                              state.movies[index].imageUrl,
-                            ));
-                            setState(() => tappedTileIndex = index);
-                            if (orientation == Orientation.portrait) {
-                              Navigator.of(context)
-                                  .pushNamed(MovieDetailScreen.routeName);
-                            }
+                      child: RefreshIndicator(
+                        onRefresh: () async =>
+                            BlocProvider.of<MovieBloc>(context)
+                                .add(PulledToRefresh(orientation)),
+                        child: ListView.builder(
+                          itemBuilder: (ctx, index) {
+                            var currentMovie = state.movies[index];
+                            return ListTile(
+                              selectedTileColor: Colors.grey,
+                              selectedColor: Colors.black,
+                              onTap: () {
+                                movieDetailBloc.add(FetchMovieImage(
+                                  currentMovie.name,
+                                  currentMovie.imageUrl,
+                                ));
+                                moviesViewModel.selectedMovie = currentMovie;
+
+                                if (orientation == Orientation.landscape) {
+                                  BlocProvider.of<MovieBloc>(context).add(
+                                      MovieWasTapped(
+                                          currentMovie.name, orientation));
+                                } else {
+                                  BlocProvider.of<MovieBloc>(context)
+                                      .add(RemoveAllTappedMovies(orientation));
+                                  Navigator.of(context)
+                                      .pushNamed(MovieDetailScreen.routeName);
+                                }
+                              },
+                              selected: true
+                                  ? (currentMovie.wasTapped &&
+                                      orientation == Orientation.landscape &&
+                                      movieDetailBloc.state !=
+                                          MovieImageInitial())
+                                  : false,
+                              title: Text(
+                                currentMovie.name,
+                              ),
+                            );
                           },
-                          selected: true ? tappedTileIndex == index : false,
-                          title: Text(
-                            state.movies[index].name,
-                          ),
+                          itemCount: state.movies.length,
                         ),
-                        itemCount: state.movies.length,
                       ),
                     ),
                     if (orientation == Orientation.landscape)

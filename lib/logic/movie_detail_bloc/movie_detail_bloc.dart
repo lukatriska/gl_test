@@ -13,5 +13,6 @@ class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   MovieDetailBloc({required this.repository}) : super(MovieImageInitial()) {
     on<FetchMovieImage>((event, emit) =>
         emit(MovieImageLoaded(event.movieName, event.imageUrl)));
+    on<StopMovieDetailLoading>((event, emit) => emit(MovieImageInitial()));
   }
 }

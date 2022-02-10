@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../logic/movie_detail_bloc/movie_detail_bloc.dart';
+import '../../logic/movie_detail_bloc/movie_detail_bloc.dart';
 
 class MovieDetailWidget extends StatelessWidget {
   const MovieDetailWidget({Key? key}) : super(key: key);
@@ -34,6 +34,7 @@ class MovieDetailWidget extends StatelessWidget {
                       height: 25,
                       child: Text(
                         state.movieName,
+                        softWrap: true,
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w600),
                       ),

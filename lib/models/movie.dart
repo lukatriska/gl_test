@@ -7,5 +7,6 @@ class Movie with _$Movie {
   const factory Movie({
     required String name,
     required String imageUrl,
+    @Default(false) bool wasTapped,
   }) = _Movie;
 }
