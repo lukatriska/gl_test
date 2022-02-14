@@ -30,17 +30,19 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Flutter Bloc',
           theme: ThemeData(
-            primarySwatch: Colors.blue,
-            brightness: Brightness.dark
-          ),
+              primarySwatch: Colors.blue, brightness: Brightness.dark),
           home: HomeScreen(title: 'Bloc / MVVM Movie App'),
           routes: {
             MoviesListScreen.routeName: (_) => BlocProvider(
-                  create: (context) => MovieBloc(repository: _movieRepository)
-                    ..add(FetchMovies()),
+                  create: (context) {
+                    BlocProvider.of<MovieDetailBloc>(context)
+                        .add(StopMovieDetailLoading());
+                    return MovieBloc(repository: _movieRepository)
+                      ..add(RemoveAllTappedMovies());
+                  },
                   child: MoviesListScreen(),
                 ),
-            MovieDetailScreen.routeName: (ctx) => MovieDetailScreen(),
+            MovieDetailScreen.routeName: (_) => MovieDetailScreen(),
           },
         ),
       ),

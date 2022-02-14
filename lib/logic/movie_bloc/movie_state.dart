@@ -13,10 +13,8 @@ class MovieLoading extends MovieState {}
 
 class MovieLoaded extends MovieState {
   final List<Movie> movies;
-  final Orientation orientation;
 
-
-  MovieLoaded(this.movies, this.orientation);
+  MovieLoaded(this.movies);
 
   @override
   List<Object> get props => [movies];

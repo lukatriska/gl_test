@@ -12,28 +12,23 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-  Orientation lastOrientation = Orientation.portrait;
-
   @override
   Widget build(BuildContext context) {
     return OrientationBuilder(
       builder: (context, orientation) {
         if (orientation == Orientation.landscape) {
-          // error here
-          // Navigator.of(context).pop();
-        } else {
-          return BlocBuilder<MovieDetailBloc, MovieDetailState>(
-            builder: (context, state) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: const Text("Movie Details"),
-                ),
-                body: MovieDetailWidget(),
-              );
-            },
-          );
+          Navigator.of(context).pop();
         }
-        return Container();
+        return BlocBuilder<MovieDetailBloc, MovieDetailState>(
+          builder: (context, state) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text("Movie Details"),
+              ),
+              body: const MovieDetailWidget(),
+            );
+          },
+        );
       },
     );
     // }

@@ -28,15 +28,18 @@ class MovieDetailWidget extends StatelessWidget {
                   children: [
                     CachedNetworkImage(
                       imageUrl: state.imageUrl,
-                      height: constraints.maxHeight - 25,
+                      height: constraints.maxHeight - 37,
                     ),
-                    SizedBox(
-                      height: 25,
-                      child: Text(
-                        state.movieName,
-                        softWrap: true,
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w600),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: SizedBox(
+                        height: 35,
+                        child: Text(
+                          state.movieName,
+                          softWrap: true,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ),
                   ],
