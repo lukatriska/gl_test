@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gl_test/presentation/screens/home_screen.dart';
@@ -16,9 +19,23 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final MovieRepository _movieRepository = MovieRepository();
+  static const appTitle = 'Bloc / MVVM Movie App';
 
   @override
   Widget build(BuildContext context) {
+    Map<String, Widget Function(dynamic _)> routes = {
+      MoviesListScreen.routeName: (_) => BlocProvider(
+            create: (context) {
+              BlocProvider.of<MovieDetailBloc>(context)
+                  .add(StopMovieDetailLoading());
+              return MovieBloc(repository: _movieRepository)
+                ..add(RemoveAllTappedMovies());
+            },
+            child: MoviesListScreen(),
+          ),
+      MovieDetailScreen.routeName: (_) => MovieDetailScreen(),
+    };
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -27,24 +44,25 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocProvider(
         create: (context) => MovieDetailBloc(repository: _movieRepository),
-        child: MaterialApp(
-          title: 'Flutter Bloc',
-          theme: ThemeData(
-              primarySwatch: Colors.blue, brightness: Brightness.dark),
-          home: HomeScreen(title: 'Bloc / MVVM Movie App'),
-          routes: {
-            MoviesListScreen.routeName: (_) => BlocProvider(
-                  create: (context) {
-                    BlocProvider.of<MovieDetailBloc>(context)
-                        .add(StopMovieDetailLoading());
-                    return MovieBloc(repository: _movieRepository)
-                      ..add(RemoveAllTappedMovies());
-                  },
-                  child: MoviesListScreen(),
+        child: Platform.isIOS
+            ? CupertinoApp(
+                theme: const CupertinoThemeData(
+                  brightness: Brightness.dark,
                 ),
-            MovieDetailScreen.routeName: (_) => MovieDetailScreen(),
-          },
-        ),
+                localizationsDelegates: const [
+                  DefaultMaterialLocalizations.delegate,
+                  DefaultCupertinoLocalizations.delegate,
+                  DefaultWidgetsLocalizations.delegate,
+                ],
+                home: HomeScreen(title: appTitle),
+                routes: routes,
+              )
+            : MaterialApp(
+                theme: ThemeData(
+                    primarySwatch: Colors.blue, brightness: Brightness.dark),
+                home: HomeScreen(title: appTitle),
+                routes: routes,
+              ),
       ),
     );
   }

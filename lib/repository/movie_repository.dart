@@ -22,12 +22,15 @@ class MovieRepository {
     return moviesList;
   }
 
-  Future<List<Movie>> fetchMovies(
-      {tappedName = -1, shuffle = false, untapMovie = false}) async {
+  Future<List<Movie>> fetchMovies({
+    tappedName = -1,
+    shuffle = false,
+    untapMovie = false,
+  }) async {
     List<Movie> moviesList = [];
     if (savedList.isEmpty) {
       var response =
-      await http.get(Uri.parse('https://putsreq.com/wDXTd4OKDBStxovIkm9G'));
+          await http.get(Uri.parse('https://putsreq.com/kSHrXHXsktsXj6rFK5LU'));
       final data = jsonDecode(response.body);
       data.forEach((name, imageUrl) =>
           moviesList.add(Movie(name: name, imageUrl: imageUrl)));
@@ -49,7 +52,7 @@ class MovieRepository {
       moviesList = makeAllMoviesUntapped(moviesList);
 
       var movieTappedIndex =
-      moviesList.indexWhere((element) => element.name == tappedName);
+          moviesList.indexWhere((element) => element.name == tappedName);
       moviesList[movieTappedIndex] = Movie(
           imageUrl: moviesList[movieTappedIndex].imageUrl,
           name: moviesList[movieTappedIndex].name,
@@ -59,7 +62,6 @@ class MovieRepository {
     if (savedList.isNotEmpty) {
       moviesList = [...savedList];
     }
-
     return moviesList;
   }
 

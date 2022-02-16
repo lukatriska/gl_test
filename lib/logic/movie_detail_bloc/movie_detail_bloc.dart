@@ -9,6 +9,7 @@ part 'movie_detail_state.dart';
 
 class MovieDetailBloc extends Bloc<MovieDetailEvent, MovieDetailState> {
   final MovieRepository repository;
+  bool navigatorPoppedOrWidgetDeactivated = false;
 
   MovieDetailBloc({required this.repository}) : super(MovieImageInitial()) {
     on<FetchMovieImage>((event, emit) =>

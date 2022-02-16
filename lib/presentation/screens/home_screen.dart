@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,36 +19,55 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Widget buildHomeScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: Platform.isIOS
+            ? [
+                CupertinoButton(
+                  child: const Text('Bloc'),
+                  onPressed: () => Navigator.of(context)
+                      .pushNamed(MoviesListScreen.routeName),
+                ),
+                CupertinoButton(
+                  child: const Text('MVVM'),
+                  onPressed: () {},
+                ),
+              ]
+            : [
+                FloatingActionButton(
+                  onPressed: () => Navigator.of(context)
+                      .pushNamed(MoviesListScreen.routeName),
+                  child: const Text('Bloc'),
+                  heroTag: 'blocbtn',
+                ),
+                FloatingActionButton(
+                  onPressed: () {},
+                  child: const Text('MVVM'),
+                  heroTag: 'mvvmbtn',
+                )
+              ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     MoviesViewModel moviesViewModel = context.watch<MoviesViewModel>();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            FloatingActionButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(MoviesListScreen.routeName),
-              child: const Text('Bloc'),
-              heroTag: 'blocbtn',
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: buildHomeScreen(),
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(widget.title),
             ),
-            FloatingActionButton(
-              onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-                //
-                // }));
-              },
-              child: const Text('MVVM'),
-              heroTag: 'mvvmbtn',
-            )
-          ],
-        ),
-      ),
-    );
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+            ),
+            body: buildHomeScreen(),
+          );
   }
 }
