@@ -5,8 +5,7 @@ class MovieDetailEvent {}
 class StopMovieDetailLoading extends MovieDetailEvent {}
 
 class FetchMovieImage extends MovieDetailEvent {
-  final String movieName;
-  final String imageUrl;
+  final Movie movie;
 
-  FetchMovieImage(this.movieName, this.imageUrl);
+  FetchMovieImage(this.movie);
 }

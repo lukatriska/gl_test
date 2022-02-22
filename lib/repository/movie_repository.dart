@@ -34,6 +34,7 @@ class MovieRepository {
       final data = jsonDecode(response.body);
       data.forEach((name, imageUrl) =>
           moviesList.add(Movie(name: name, imageUrl: imageUrl)));
+      data.forEach((k, v) => moviesList.add(Movie(name: k, imageUrl: v)));
     } else {
       moviesList = [...savedList];
     }

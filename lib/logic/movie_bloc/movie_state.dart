@@ -19,4 +19,3 @@ class MovieLoaded extends MovieState {
   @override
   List<Object> get props => [movies];
 }
-

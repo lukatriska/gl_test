@@ -9,9 +9,12 @@ import 'package:gl_test/view_models/movies_view_model.dart';
 
 import '../../logic/movie_bloc/movie_bloc.dart';
 import '../../logic/movie_detail_bloc/movie_detail_bloc.dart';
+import '../../models/movie.dart';
 
 class MoviesListScreen extends StatefulWidget {
-  static const routeName = '/movies-list';
+  final bool useBloc;
+
+  const MoviesListScreen(this.useBloc, {Key? key}) : super(key: key);
 
   @override
   State<MoviesListScreen> createState() => _MoviesListScreenState();
@@ -23,67 +26,84 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
   @override
   initState() {
     super.initState();
-    movieDetailBloc = BlocProvider.of<MovieDetailBloc>(context);
+    if (widget.useBloc) {
+      movieDetailBloc = BlocProvider.of<MovieDetailBloc>(context);
+    }
+  }
+
+  @override
+  void deactivate() {
+    if (!widget.useBloc) context.watch<MoviesViewModel>().removeTappedMovie();
+    super.deactivate();
   }
 
   @override
   Widget build(BuildContext context) {
     MoviesViewModel moviesViewModel = context.watch<MoviesViewModel>();
 
-    if (MediaQuery.of(context).orientation == Orientation.portrait) {
-      BlocProvider.of<MovieBloc>(context).add(RemoveAllTappedMovies());
-      movieDetailBloc.add(StopMovieDetailLoading());
+    if (widget.useBloc) {
+      if (MediaQuery.of(context).orientation == Orientation.portrait) {
+        BlocProvider.of<MovieBloc>(context).add(RemoveAllTappedMovies());
+        movieDetailBloc.add(StopMovieDetailLoading());
+      }
+
+      if (MediaQuery.of(context).orientation == Orientation.landscape &&
+          movieDetailBloc.navigatorPoppedOrWidgetDeactivated) {
+        BlocProvider.of<MovieBloc>(context).add(RemoveAllTappedMovies());
+        movieDetailBloc.add(StopMovieDetailLoading());
+        movieDetailBloc.navigatorPoppedOrWidgetDeactivated = false;
+      }
     }
 
-    if (MediaQuery.of(context).orientation == Orientation.landscape &&
-        movieDetailBloc.navigatorPoppedOrWidgetDeactivated) {
-      BlocProvider.of<MovieBloc>(context).add(RemoveAllTappedMovies());
-      movieDetailBloc.add(StopMovieDetailLoading());
-    }
+    Widget buildSliverList(orientation, movies) => SliverList(
+            delegate:
+                SliverChildListDelegate(List.generate(movies.length, (index) {
+          var currentMovie = movies[index];
+          return GestureDetector(
+            onTap: () {
+              if (widget.useBloc) {
+                movieDetailBloc.add(FetchMovieImage(currentMovie));
+                BlocProvider.of<MovieBloc>(context)
+                    .add(MovieWasTapped(currentMovie.name));
+              } else {
+                moviesViewModel.removeTappedMovie();
+                moviesViewModel.selectedMovie = currentMovie;
+                moviesViewModel.notifyListeners();
+              }
 
-    Widget buildCupertinoFlexibleWidget(orientation, state) {
-      return SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            CupertinoSliverRefreshControl(
-              onRefresh: () async =>
-                  BlocProvider.of<MovieBloc>(context).add(PulledToRefresh()),
+              if (orientation == Orientation.portrait) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MovieDetailScreen(widget.useBloc)));
+              }
+            },
+            child: Container(
+              color:
+                  currentMovie.wasTapped && orientation == Orientation.landscape
+                      ? Colors.deepOrangeAccent
+                      : Colors.black,
+              padding: const EdgeInsets.only(left: 10, top: 8, bottom: 8),
+              child: Text(currentMovie.name,
+                  style: const TextStyle(color: Colors.white)),
             ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                  List.generate(state.movies.length, (index) {
-                var currentMovie = state.movies[index];
-                return GestureDetector(
-                  onTap: () {
-                    movieDetailBloc.add(FetchMovieImage(
-                      currentMovie.name,
-                      currentMovie.imageUrl,
-                    ));
-                    moviesViewModel.selectedMovie = currentMovie;
-                    BlocProvider.of<MovieBloc>(context)
-                        .add(MovieWasTapped(currentMovie.name));
+          );
+        }).toList()));
 
-                    if (orientation == Orientation.portrait) {
-                      Navigator.of(context)
-                          .pushNamed(MovieDetailScreen.routeName);
-                    }
-                  },
-                  child: Container(
-                    color: currentMovie.wasTapped &&
-                            orientation == Orientation.landscape
-                        ? Colors.deepOrangeAccent
-                        : Colors.black,
-                    padding: const EdgeInsets.only(left: 10, top: 8, bottom: 8),
-                    child: Text(currentMovie.name,
-                        style: const TextStyle(color: Colors.white)),
-                  ),
-                );
-              }).toList()),
-            ),
-          ],
-        ),
-      );
-    }
+    Widget buildCupertinoFlexibleWidget(orientation, state) => SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              CupertinoSliverRefreshControl(
+                onRefresh: () async => widget.useBloc
+                    ? BlocProvider.of<MovieBloc>(context).add(PulledToRefresh())
+                    : moviesViewModel.pulledToRefresh(),
+              ),
+              buildSliverList(orientation,
+                  widget.useBloc ? state.movies : moviesViewModel.movies),
+            ],
+          ),
+        );
 
     Widget buildMaterialFlexibleWidget(orientation, state) {
       return RefreshIndicator(
@@ -96,16 +116,22 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
                 selectedTileColor: Colors.grey,
                 selectedColor: Colors.black,
                 onTap: () {
-                  movieDetailBloc.add(FetchMovieImage(
-                    currentMovie.name,
-                    currentMovie.imageUrl,
-                  ));
-                  moviesViewModel.selectedMovie = currentMovie;
-                  BlocProvider.of<MovieBloc>(context)
-                      .add(MovieWasTapped(currentMovie.name));
+                  if (widget.useBloc) {
+                    movieDetailBloc.add(FetchMovieImage(currentMovie));
+                    BlocProvider.of<MovieBloc>(context)
+                        .add(MovieWasTapped(currentMovie.name));
+                  } else {
+                    moviesViewModel.removeTappedMovie();
+                    moviesViewModel.selectedMovie = currentMovie;
+                    moviesViewModel.notifyListeners();
+                  }
+
                   if (orientation == Orientation.portrait) {
-                    Navigator.of(context)
-                        .pushNamed(MovieDetailScreen.routeName);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MovieDetailScreen(widget.useBloc)));
                   }
                 },
                 selected: true
@@ -119,51 +145,84 @@ class _MoviesListScreenState extends State<MoviesListScreen> {
       );
     }
 
-    Widget buildListScreenBody() {
-      return OrientationBuilder(
-        builder: (context, orientation) {
-          return BlocBuilder<MovieBloc, MovieState>(
-            builder: (context, state) {
-              if (state is MovieInitial) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is MovieNotLoaded) {
-                return const Center(child: Text("Movies not loaded"));
-              }
-              if (state is MovieLoaded) {
-                return Row(
+    Widget buildBlocListScreenBody() => OrientationBuilder(
+          builder: (context, orientation) {
+            return BlocBuilder<MovieBloc, MovieState>(
+              builder: (context, state) {
+                if (state is MovieInitial) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is MovieNotLoaded) {
+                  return const Center(child: Text("Movies not loaded"));
+                }
+                if (state is MovieLoaded) {
+                  return Row(
+                    children: [
+                      Flexible(
+                          child: Platform.isIOS
+                              ? buildCupertinoFlexibleWidget(orientation, state)
+                              : buildMaterialFlexibleWidget(
+                                  orientation, state)),
+                      if (orientation == Orientation.landscape)
+                        Flexible(
+                          flex: 2,
+                          child: MovieDetailWidget(widget.useBloc),
+                        ),
+                    ],
+                  );
+                }
+                return const Center();
+              },
+            );
+          },
+        );
+
+    Widget buildMVVMListScreenBody() =>
+        OrientationBuilder(builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            moviesViewModel.removeTappedMovie();
+          } else {
+            if (moviesViewModel.justPoppedMovie.name != "") {
+              moviesViewModel.selectedMovie = moviesViewModel.justPoppedMovie;
+              moviesViewModel.justPoppedMovie =
+                  const Movie(name: '', imageUrl: '');
+            }
+          }
+          return moviesViewModel.loading
+              ? const CircularProgressIndicator()
+              : Row(
                   children: [
                     Flexible(
                         child: Platform.isIOS
-                            ? buildCupertinoFlexibleWidget(orientation, state)
-                            : buildMaterialFlexibleWidget(orientation, state)),
+                            ? buildCupertinoFlexibleWidget(
+                                orientation, moviesViewModel.movies)
+                            : buildMaterialFlexibleWidget(
+                                orientation, moviesViewModel.movies)),
                     if (orientation == Orientation.landscape)
-                      const Flexible(
+                      Flexible(
                         flex: 2,
-                        child: MovieDetailWidget(),
+                        child: MovieDetailWidget(widget.useBloc),
                       ),
                   ],
                 );
-              }
-              return const Center();
-            },
-          );
-        },
-      );
-    }
+        });
 
     return Platform.isIOS
         ? CupertinoPageScaffold(
             navigationBar: const CupertinoNavigationBar(
               middle: Text("List of Movies"),
             ),
-            child: buildListScreenBody(),
+            child: widget.useBloc
+                ? buildBlocListScreenBody()
+                : buildMVVMListScreenBody(),
           )
         : Scaffold(
             appBar: AppBar(
               title: const Text("List of Movies"),
             ),
-            body: buildListScreenBody(),
+            body: widget.useBloc
+                ? buildBlocListScreenBody()
+                : buildMVVMListScreenBody(),
           );
   }
 }
