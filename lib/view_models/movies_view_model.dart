@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gl_test/models/movie.dart';
 
-import '../models/movie_error.dart';
 import '../repository/movie_services.dart';
 
 class MoviesViewModel extends ChangeNotifier {
@@ -10,7 +9,6 @@ class MoviesViewModel extends ChangeNotifier {
   Movie justPoppedMovie = const Movie(name: "", imageUrl: "");
 
   List<Movie> movies = [];
-  late MovieError movieError;
   late Movie _selectedMovie;
 
   Movie get selectedMovie => _selectedMovie;
